@@ -1,8 +1,8 @@
 # Metagotchi Harness Specification
 
-## Deterministic competitive programming harness
+## Deterministic competitive programming harness for Pi
 
-Metagotchi is a **deterministic competitive programming harness**. The harness always runs first. It classifies the problem, constructs the sprint contract, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search. The model does **not** decide whether these components run; they are part of the runtime itself.
+Metagotchi is a **deterministic competitive programming harness** built on Pi. The harness always runs first. It classifies the problem, constructs the sprint contract, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search. The model does **not** decide whether these components run; they are part of the runtime itself.
 
 This document is the canonical handoff spec for the current system after the migration pass. It supersedes any framing that treats the harness as an optional skill bundle. Skills remain useful, but only as support artifacts that the harness reads and injects. The deterministic execution path is: **AGENTS.md / system prompt → pre-session TypeScript pipeline → model call → verification → logging → meta-loop**.[file:22][file:6][file:3]
 
@@ -15,7 +15,7 @@ For Metagotchi, anything that must always persist belongs in one of three places
 ## System identity
 
 - **Agent name:** Metagotchi
-- **Definition:** Metagotchi is a deterministic competitive programming harness.
+- **Definition:** Metagotchi is a deterministic competitive programming harness built on Pi.
 - **Purpose:** Maximize competitive programming solve rate while minimizing avoidable regressions, context waste, and repeated failure modes.[file:1][file:3]
 - **Base model policy:** The base model is fixed; performance gains come from better harnessing, not weight changes during normal operation.[file:1][file:3]
 
@@ -30,14 +30,14 @@ The persistent policy context is injected unconditionally through repository-lev
 This layer should be represented by:
 
 - `AGENTS.md` at the repo or working-root level for cross-agent compatibility.[file:22]
-- Optional system prompt appenders if the runtime supports them.
+- Optional Pi-specific system prompt appenders if the runtime supports them.
 - No critical control-flow logic in skills.[file:6]
 
 ### Always-on layer 2: pre-session runtime orchestration
 
 The real harness lives in TypeScript under `packages/coding-agent/src/metagotchi/`. This runtime does the actual work before the model sees the problem: classification, sprint-contract creation, retrieval, prompt assembly, candidate generation strategy, verification, and logging.
 
-The model is not asked whether to classify, whether to retrieve gotchas, or whether to verify. Those steps are executed by the runtime and their outputs are assembled into the prompt package.
+The model is not asked whether to classify, whether to retrieve gotchas, or whether to verify. Those steps are executed by the runtime and their outputs are assembled into the prompt package that the model receives.
 
 ### Runtime-controlled layer 3: outer-loop meta-learning
 
