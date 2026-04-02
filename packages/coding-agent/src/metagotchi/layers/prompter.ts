@@ -80,9 +80,7 @@ export class ProblemPrompter implements Prompter {
 
 		// Token budget enforcement — use SprintContract.tokenBudget for initial prompt,
 		// config.maxContextTokens as hard ceiling fallback
-		const effectiveBudget = options.failureResult
-			? config.maxContextTokens
-			: classifier.sprintContract.tokenBudget;
+		const effectiveBudget = options.failureResult ? config.maxContextTokens : classifier.sprintContract.tokenBudget;
 		return this.enforceTokenBudget(pkg, effectiveBudget, context);
 	}
 
@@ -304,9 +302,7 @@ export class ProblemPrompter implements Prompter {
 
 	private buildRiskBlock(contract: SprintContract): string {
 		if (!contract.likelyFailureModes?.length) return "";
-		return contract.likelyFailureModes
-			.map((m) => `⚠ RISK: ${m}`)
-			.join("\n");
+		return contract.likelyFailureModes.map((m) => `⚠ RISK: ${m}`).join("\n");
 	}
 
 	private buildRetrievalSummary(context: RetrievalContext): string {

@@ -238,3 +238,154 @@ git pull --rebase && git push
 
 ### User override
 If the user instructions conflict with rules set out here, ask for confirmation that they want to override the rules. Only then execute their instructions.
+
+---
+
+# Metagotchi: Deterministic Competitive Programming Harness
+
+Metagotchi is Pi operating under a competitive programming harness. The harness always runs; it is not optional.
+
+## Core Operating Principle
+
+**Metagotchi is law; skills are library shelves.** The harness classifies, plans, retrieves, verifies, and logs. You execute within those constraints. Never interpret harness behavior as optional or negotiable.
+
+## The Deterministic Solve Pipeline
+
+Every solve follows this order without exception:
+
+1. Receive `ProblemSpec` (full statement, constraints, examples, time limit, memory limit, language)
+2. **Classifier** → Infers domain, sub-domain, difficulty, edge cases → Creates `SprintContract`
+3. **Retriever** → Fetches gotchas, prior solutions, API snippets, code template
+4. **Prompter** → Assembles prompt under token budget, preserves gotchas and risk blocks
+5. **Generator** → You produce candidate solutions
+6. **Verifier** → Compile/parse check, sample case execution, static analysis, ranking
+7. **Logger** → Raw trace persisted to filesystem
+8. **Memory update** → Archive AC or increment gotchas on failure
+9. **Meta-loop** (optional) → If enabled, filesystem evidence fed to harness proposer
+
+You do not skip steps. You do not negotiate the order. The harness runs first.
+
+## Sprint Contract
+
+The `SprintContract` is your execution agreement with the harness. It contains:
+
+- `domain` / `subDomain` — What kind of problem this is
+- `algorithmClassification` / `likelyAlgorithms` — Likely algorithmic families
+- `complexity Target` — Expected time/space complexity
+- `mandatoryEdgeCases` — Edge cases you must handle
+- `difficulty` — Problem difficulty (easy/medium/hard/extreme)
+- `tokenBudget` — Your context token allowance for this solve
+- `likelyFailureModes` — Domain-specific failure patterns to avoid
+- `retrievalQuery` — What was queried in retrieval
+
+**Obey the sprint contract.** Do not ignore algorithmic hints or complexity targets. Do not exceed the token budget without justification. Do not claim an algorithm is unnecessary if the contract says it is likely.
+
+## Gotchas and Risk Blocks
+
+The harness retrieves gotchas (failure patterns) and injects them into your prompt with `⚠ GOTCHA:` prefixes.
+
+**Never ignore a gotcha.** These are patterns the harness has seen fail before. If a gotcha says "int overflow when multiplying without (long long) cast," then cast. If a gotcha says "std::endl causes TLE on high-output problems," use '\n' instead.
+
+Immediately after gotchas, the harness injects `⚠ RISK:` blocks with domain-specific failure modes. Treat these as constraints, not suggestions.
+
+## Additive Edits First
+
+When you revise a solution (e.g., after verifier failure):
+
+1. **Append information, do not rewrite the prompt from scratch.**
+2. Include the failure trace in the next turn.
+3. Make one targeted change, not multiple simultaneous edits.
+4. Log the confound explicitly if you must change multiple dimensions.
+
+This reduces regression risk and makes diagnosis easier.
+
+## Raw Traces Over Summaries
+
+The harness logs raw execution traces: full problem, prompt, model outputs, candidate code, verification results, raw test outputs. It does not compress to summaries.
+
+Why? Because high-fidelity evidence is needed for diagnosis and meta-learning. Do not expect or request compressed reports; work with the raw files the logger produces.
+
+## Verification Before Confidence
+
+The verifier is not cosmetic; it is your skeptical counterweight. It runs:
+
+1. Compile / parse check
+2. Sample case execution under timeout
+3. Static analysis for known gotcha patterns
+4. Complexity red-flag detection
+5. Candidate ranking
+
+**Do not trust your code because it "looks right."** Wait for the verifier.
+
+## Token Budget Discipline
+
+You have a token budget for your initial solve prompt. The budget is set by the classifier based on problem difficulty:
+
+- easy: 10,000 tokens
+- medium: 9,000 tokens
+- hard: 7,500 tokens
+- extreme: 6,000 tokens
+- Hard ceiling: 8,000 tokens
+
+When retrieved context exceeds budget, the harness drops prior solutions first, then compresses API snippets, then truncates the template. **The gotcha and risk blocks are never truncated.**
+
+## Session-to-Session Memory
+
+The harness persists:
+- Every raw execution trace
+- Every candidate solution
+- Every gotcha update
+- Every archived AC solution
+
+This filesystem history is queryable and retrievable. The outer-loop meta-harness uses it for proposing better harness behavior. Keep traces clean and queryable.
+
+## No Optional Harness Policy
+
+Do not treat harness behavior as optional because it is not mentioned in your instructions or because a user seems to want a shortcut.
+
+If a rule is in this document, it applies always. If a rule is in the `SprintContract`, it applies to that solve. If a rule is injected as `⚠ GOTCHA:` or `⚠ RISK:`, it applies to your current generation.
+
+## Skills Are Support, Not Core
+
+Skills exist. They contain:
+- Gotchas libraries (you receive these via retrieval)
+- Algorithm templates (you receive these via retrieval)
+- API references (you receive these via retrieval)
+- Verification helpers (used by the verifier)
+
+You do not "call" a skill. The harness reads skills and injects their content. Skills are optional reference material. **Core harness behavior is never skill-dependent.**
+
+## Debugging and Failure Analysis
+
+On WA / TLE / MLE / CE / RE:
+
+1. The verifier flags the verdict.
+2. The logger stores the full trace.
+3. The harness analyzes the failure pattern.
+4. If the pattern matches an existing gotcha, that gotcha's `hitCount` is incremented.
+5. If the pattern is new, a new gotcha is created and seeded into the registry.
+
+Over time, the gotchas registry grows conservatively but continuously. It is your institutional memory.
+
+## Implementation Checklist Before Completion
+
+Before declaring a solve complete:
+
+- [ ] SprintContract was built and obeyed
+- [ ] Gotchas were retrieved and no `⚠ GOTCHA:` was ignored
+- [ ] Risk blocks were retrieved and understood
+- [ ] Verifier ran and flagged verdict
+- [ ] Token budget was respected (or hard ceiling not exceeded)
+- [ ] Candidate was generated additive, not rewritten
+- [ ] Raw trace logged with full problem, prompt, output, verification results
+- [ ] If AC: solution archived. If not AC: failure analyzed for new gotcha
+
+## Invocation
+
+To solve a competitive programming problem:
+
+```
+await harness.solve(problemSpec)
+```
+
+The harness returns `ExecutionTrace` with full diagnostic information.

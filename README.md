@@ -23,11 +23,87 @@ OSS weekend runs Friday, March 27, 2026 through Monday, April 6, 2026. New issue
   <a href="https://exe.dev"><img src="packages/coding-agent/docs/images/exy.png" alt="Exy mascot" width="48" /><br />exe.dev</a>
 </p>
 
-# Pi Monorepo
+# Metagotchi
 
-> **Looking for the pi coding agent?** See **[packages/coding-agent](packages/coding-agent)** for installation and usage.
+> Deterministic competitive programming harness. Built on Pi.
 
-Tools for building AI agents and managing LLM deployments.
+Metagotchi is a competitive programming harness that classifies problems, builds sprint contracts, retrieves high-signal context, verifies outputs, logs raw traces for diagnosis, and learns from failures via an optional meta-loop.
+
+**Core principle: The core is law; skills are library shelves.**
+
+---
+
+## What Metagotchi Does
+
+**Every solve follows the same deterministic order:**
+
+1. Classify the problem → build `SprintContract`
+2. Retrieve gotchas, prior solutions, API refs, and templates
+3. Assemble prompt under token budget, preserving gotchas and risk blocks
+4. Generate candidate solutions
+5. Verify: compile, sample cases, static analysis, ranking
+6. Log raw trace to filesystem
+7. Archive AC solutions or update gotchas on failure
+8. Optional: outer-loop harness search (if enabled)
+
+None of these steps are optional or negotiable. The core runs every time.
+
+---
+
+## Features
+
+- **Problem Classification** — Infers domain, sub-domain, difficulty, and edge cases
+- **Sprint Contracts** — Binding execution agreements specifying algorithm, complexity, and edge cases
+- **Gotchas** — Institutional memory of failure patterns (14+ seeded patterns)
+- **Verification Pipeline** — Compile check, sample execution, static analysis, complexity red-flags
+- **Token Budget** — Difficulty-based budgets (easy: 10k, medium: 9k, hard: 7.5k, extreme: 6k)
+- **Meta-Loop** — Optional outer-loop optimization using filesystem evidence
+
+---
+
+## Installation
+
+```bash
+npm install -g @mariozechner/pi-coding-agent
+```
+
+## Programmatic Usage
+
+```typescript
+import { HarnessRunner, type HarnessConfig, type ProblemSpec } from '@mariozechner/pi-coding-agent/metagotchi';
+
+const problem: ProblemSpec = {
+  id: 'codeforces-1234a',
+  title: 'A + B',
+  statement: 'Given two integers A and B, print their sum.',
+  constraints: '1 ≤ A, B ≤ 10^9',
+  examples: [{ input: '1 2', output: '3' }],
+  timeLimit: 1000,
+  memoryLimit: 256,
+  language: 'cpp',
+};
+
+const config: HarnessConfig = {
+  maxCandidates: 3,
+  topKRetrieval: 5,
+  maxContextTokens: 8000,
+  enableVerifier: true,
+  enableMetaLoop: false,
+  language: 'cpp',
+  logDir: './logs',
+  archiveDir: './archive',
+  gotchasDir: './gotchas',
+};
+
+const harness = new HarnessRunner(config, modelStream);
+const trace = await harness.solve(problem);
+
+console.log(trace.finalVerdict); // 'AC' if successful
+```
+
+See [packages/coding-agent/src/metagotchi/README.md](packages/coding-agent/src/metagotchi/README.md) for detailed documentation.
+
+---
 
 ## Packages
 

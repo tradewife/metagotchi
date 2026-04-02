@@ -1,4 +1,4 @@
-// packages/coding-agent/src/cp-harness/index.ts
+// packages/coding-agent/src/metagotchi/index.ts
 // Re-exports only. No implementation here.
 
 export { defaultConfig, HarnessRunner, type ModelStreamFn } from "./harness.js";
@@ -17,9 +17,9 @@ export type {
 	HarnessCandidate,
 	HarnessConfig,
 	HarnessEdit,
-	MetaProposal,
 	Language,
 	MetaAnalysis,
+	MetaProposal,
 	ProblemDomain,
 	ProblemSpec,
 	PromptPackage,

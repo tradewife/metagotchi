@@ -17,6 +17,10 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
+		"./metagotchi": {
+			"types": "./dist/metagotchi/index.d.ts",
+			"import": "./dist/metagotchi/index.js"
+		},
 		"./hooks": {
 			"types": "./dist/core/hooks/index.d.ts",
 			"import": "./dist/core/hooks/index.js"

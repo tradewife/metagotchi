@@ -217,8 +217,7 @@ export const currentSkillGenIndex = 1;
 export function filterGotchas(gotchas: GotchaRecord[], domain: ProblemDomain, subDomain: string): GotchaRecord[] {
 	return gotchas.filter(
 		(g) =>
-			(g.domain.includes("*") || g.domain.includes(domain)) &&
-			(g.subDomain === "*" || g.subDomain === subDomain),
+			(g.domain.includes("*") || g.domain.includes(domain)) && (g.subDomain === "*" || g.subDomain === subDomain),
 	);
 }
 
@@ -237,7 +236,5 @@ export function findMatchingGotcha(
 	domain: ProblemDomain,
 	pattern: string,
 ): GotchaRecord | undefined {
-	return gotchas.find(
-		(g) => (g.domain.includes("*") || g.domain.includes(domain)) && g.pattern === pattern,
-	);
+	return gotchas.find((g) => (g.domain.includes("*") || g.domain.includes(domain)) && g.pattern === pattern);
 }

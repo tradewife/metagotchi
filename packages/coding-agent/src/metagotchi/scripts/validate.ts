@@ -1,11 +1,11 @@
 /**
  * Fast smoke test — must complete in <5 seconds.
- * Run: npx tsx src/cp-harness/scripts/validate.ts
+ * Run: npx tsx src/metagotchi/scripts/validate.ts
  * Exit 0 on all pass, exit 1 on any failure.
  */
 import { ProblemClassifier } from "../layers/classifier.js";
-import { ProblemRetriever } from "../layers/retriever.js";
 import { ProblemPrompter } from "../layers/prompter.js";
+import { ProblemRetriever } from "../layers/retriever.js";
 import { INITIAL_GOTCHAS } from "../skills/gotchas.js";
 import { SolutionArchive } from "../store/solution-archive.js";
 import type { ProblemSpec } from "../types.js";

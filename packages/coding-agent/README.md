@@ -598,3 +598,16 @@ MIT
 - [@mariozechner/pi-ai](https://www.npmjs.com/package/@mariozechner/pi-ai): Core LLM toolkit
 - [@mariozechner/pi-agent](https://www.npmjs.com/package/@mariozechner/pi-agent): Agent framework
 - [@mariozechner/pi-tui](https://www.npmjs.com/package/@mariozechner/pi-tui): Terminal UI components
+
+---
+
+## Metagotchi: Competitive Programming Harness
+
+For competitive programming workloads, pi includes a deterministic harness that classifies problems, builds sprint contracts, retrieves context, verifies outputs, and logs traces.
+
+See [src/metagotchi/README.md](src/metagotchi/README.md) for detailed documentation on:
+- The solve pipeline and sprint contracts
+- Gotchas and risk blocks
+- Verification pipeline
+- Token budgets
+- Meta-loop optimization

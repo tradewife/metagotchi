@@ -69,9 +69,7 @@ export class MetaProposer {
 				if (bAvg > aAvg) dominated.add(a.id);
 			}
 		}
-		return population
-			.filter((c) => !dominated.has(c.id))
-			.map((c) => ({ ...c, isOnParetoFrontier: true }));
+		return population.filter((c) => !dominated.has(c.id)).map((c) => ({ ...c, isOnParetoFrontier: true }));
 	}
 
 	/** Persist a candidate directory to store/harnesses/{id}/ */
@@ -109,7 +107,7 @@ export class MetaProposer {
 		sections.push(`Generation: ${currentGenIndex}`);
 		sections.push(`Population size: ${population.length}`);
 		sections.push(
-			`Best candidate: ${best?.id ?? "none"} (avg score: ${this.avgScore(best ?? { scores: {} } as HarnessCandidate).toFixed(3)})`,
+			`Best candidate: ${best?.id ?? "none"} (avg score: ${this.avgScore(best ?? ({ scores: {} } as HarnessCandidate)).toFixed(3)})`,
 		);
 
 		sections.push("\n=== LAST 3 REGRESSIONS ===");

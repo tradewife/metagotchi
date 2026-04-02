@@ -6,8 +6,8 @@ import { mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { TraceLogger } from "../../../src/cp-harness/layers/logger.js";
-import type { ExecutionTrace, GotchaRecord, HarnessConfig, SolutionRecord } from "../../../src/cp-harness/types.js";
+import { TraceLogger } from "../../../src/metagotchi/layers/logger.js";
+import type { ExecutionTrace, GotchaRecord, HarnessConfig, SolutionRecord } from "../../../src/metagotchi/types.js";
 
 function makeConfig(tempDir: string): HarnessConfig {
 	return {

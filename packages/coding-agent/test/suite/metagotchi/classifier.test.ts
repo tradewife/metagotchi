@@ -6,9 +6,9 @@ import { mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ProblemClassifier } from "../../../src/cp-harness/layers/classifier.js";
-import { SolutionArchive } from "../../../src/cp-harness/store/solution-archive.js";
-import type { ProblemSpec } from "../../../src/cp-harness/types.js";
+import { ProblemClassifier } from "../../../src/metagotchi/layers/classifier.js";
+import { SolutionArchive } from "../../../src/metagotchi/store/solution-archive.js";
+import type { ProblemSpec } from "../../../src/metagotchi/types.js";
 
 function makeProblem(overrides: Partial<ProblemSpec> = {}): ProblemSpec {
 	return {

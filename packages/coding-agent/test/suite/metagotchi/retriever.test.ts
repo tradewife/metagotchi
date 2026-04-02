@@ -6,9 +6,9 @@ import { mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ProblemRetriever } from "../../../src/cp-harness/layers/retriever.js";
-import { SolutionArchive } from "../../../src/cp-harness/store/solution-archive.js";
-import type { ClassifierOutput, GotchaRecord, SolutionRecord } from "../../../src/cp-harness/types.js";
+import { ProblemRetriever } from "../../../src/metagotchi/layers/retriever.js";
+import { SolutionArchive } from "../../../src/metagotchi/store/solution-archive.js";
+import type { ClassifierOutput, GotchaRecord, SolutionRecord } from "../../../src/metagotchi/types.js";
 
 const TEST_GOTCHAS: GotchaRecord[] = [
 	{

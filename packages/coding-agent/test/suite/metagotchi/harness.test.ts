@@ -6,8 +6,8 @@ import { mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { defaultConfig, HarnessRunner } from "../../../src/cp-harness/harness.js";
-import type { ProblemSpec } from "../../../src/cp-harness/types.js";
+import { defaultConfig, HarnessRunner } from "../../../src/metagotchi/harness.js";
+import type { ProblemSpec } from "../../../src/metagotchi/types.js";
 
 function makeProblem(overrides: Partial<ProblemSpec> = {}): ProblemSpec {
 	return {

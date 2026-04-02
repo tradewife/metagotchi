@@ -3,13 +3,13 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { ProblemPrompter } from "../../../src/cp-harness/layers/prompter.js";
+import { ProblemPrompter } from "../../../src/metagotchi/layers/prompter.js";
 import type {
 	ClassifierOutput,
 	ProblemSpec,
 	RetrievalContext,
 	VerificationResult,
-} from "../../../src/cp-harness/types.js";
+} from "../../../src/metagotchi/types.js";
 
 function makeProblem(overrides: Partial<ProblemSpec> = {}): ProblemSpec {
 	return {

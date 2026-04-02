@@ -101,11 +101,7 @@ const DOMAIN_FAILURE_MODES: Record<ProblemDomain, string[]> = {
 		"visited array not reset between test cases",
 		"unweighted vs weighted edge confusion",
 	],
-	dp: [
-		"wrong base case",
-		"state array index out of bounds",
-		"missing modular arithmetic on counting problems",
-	],
+	dp: ["wrong base case", "state array index out of bounds", "missing modular arithmetic on counting problems"],
 	geometry: [
 		"floating point epsilon wrong — use 1e-9",
 		"degenerate collinear case unhandled",
@@ -126,14 +122,8 @@ const DOMAIN_FAILURE_MODES: Record<ProblemDomain, string[]> = {
 		"suffix array built in O(N^2) when O(N log N) needed",
 		"trie child indexing off by char offset",
 	],
-	greedy: [
-		"sorting comparator violates strict weak ordering",
-		"tie-breaking missing — non-deterministic sort",
-	],
-	combinatorics: [
-		"missing modular arithmetic on large factorials",
-		"double-counting symmetric pairs",
-	],
+	greedy: ["sorting comparator violates strict weak ordering", "tie-breaking missing — non-deterministic sort"],
+	combinatorics: ["missing modular arithmetic on large factorials", "double-counting symmetric pairs"],
 	"number-theory": [
 		"Fermat's little theorem applied to non-prime modulus",
 		"sieve not extended to sqrt(N) for factorization",

@@ -3,8 +3,8 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { SolutionVerifier } from "../../../src/cp-harness/layers/verifier.js";
-import type { ProblemSpec } from "../../../src/cp-harness/types.js";
+import { SolutionVerifier } from "../../../src/metagotchi/layers/verifier.js";
+import type { ProblemSpec } from "../../../src/metagotchi/types.js";
 
 function makeProblem(overrides: Partial<ProblemSpec> = {}): ProblemSpec {
 	return {

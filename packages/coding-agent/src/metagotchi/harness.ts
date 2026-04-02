@@ -43,9 +43,9 @@ export function defaultConfig(overrides?: Partial<HarnessConfig>): HarnessConfig
 		enableVerifier: true,
 		enableMetaLoop: false,
 		language: "cpp",
-		logDir: "/tmp/cp-harness-logs",
-		archiveDir: "/tmp/cp-harness-archive",
-		gotchasDir: "/tmp/cp-harness-gotchas",
+		logDir: "/tmp/metagotchi-logs",
+		archiveDir: "/tmp/metagotchi-archive",
+		gotchasDir: "/tmp/metagotchi-gotchas",
 		...overrides,
 	};
 }
@@ -78,10 +78,7 @@ export class HarnessRunner {
 		this.logger = logger;
 
 		if (config.enableMetaLoop) {
-			this.metaProposer = new MetaProposer(
-				path.join(config.archiveDir, "../harnesses"),
-				config.logDir,
-			);
+			this.metaProposer = new MetaProposer(path.join(config.archiveDir, "../harnesses"), config.logDir);
 		}
 	}
 
