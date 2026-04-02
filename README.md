@@ -15,9 +15,9 @@ OSS weekend runs Friday, March 27, 2026 through Monday, April 6, 2026. New issue
 
 # Metagotchi
 
-> Deterministic competitive programming harness built on Pi
+> Deterministic competitive programming harness for Pi
 
-Metagotchi is a deterministic competitive programming harness built on Pi. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search.
+Metagotchi is a **deterministic competitive programming harness** built on Pi. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search. The model does **not** decide whether these components run; they are part of the runtime itself.
 
 **Core principle: The harness is law; skills are library shelves.**
 
@@ -31,7 +31,7 @@ Metagotchi has two always-on layers and one optional-but-runtime-controlled laye
 
 ### Layer 1: Persistent Policy Context
 
-Injected unconditionally through repository-level context files (`AGENTS.md`) and system prompt configuration. This is where global rules live: additive edits first, raw traces over summaries, verification before confidence, and explicit role boundaries between planner, generator, and evaluator.
+Injected unconditionally through repository-level context files (`AGENTS.md`) and system prompt configuration. This is where global rules live: additive edits first, raw traces over summaries, verification before confidence, and explicit role boundaries between planner, generator, and evaluator. Optional Pi-specific system prompt appenders can be used if the runtime supports them.
 
 ### Layer 2: Pre-Session Runtime Orchestration
 
