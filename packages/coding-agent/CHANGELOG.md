@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Added
+
+- **cp-harness**: Competitive programming harness with five composable layers:
+  - Layer 1 (Classifier): Two-stage problem classification with keyword routing and model fallback, Sprint Contract emission, edge case detection
+  - Layer 2a (Retriever): Budget-enforced context retrieval from solution archive, gotcha registry, API references, and domain templates
+  - Layer 2b (Prompter): System prompt construction with token budget enforcement, multi-candidate variation, additive editing, and interactive protocol injection
+  - Layer 3 (Verifier): Fail-fast verification pipeline — compile/parse check, sample case execution via subprocess, static analysis, verdict assignment
+  - Layer 4 (Logger): Filesystem-backed trace store with flat JSON, gotcha auto-update on non-AC runs, solution archival on AC
+  - Layer 5 (Meta-Loop): Trace-based harness self-improvement proposer (disabled by default)
+- **cp-harness**: Skills library with seed gotcha registry (11 patterns), domain routing table, constraint→algorithm map, language API references
+- **cp-harness**: Solution archive with SHA256 fingerprint indexing and manifest-based fast listing
+- **cp-harness**: Full test suite with 62 tests across 6 test files covering all layers and end-to-end solve pipeline
+
 ### Breaking Changes
 
 - Removed extension post-transition events `session_switch` and `session_fork`. Extensions should now use `session_start` and inspect `event.reason`, which is now one of `"startup" | "reload" | "new" | "resume" | "fork"`. For `"new"`, `"resume"`, and `"fork"`, `session_start` also includes `previousSessionFile`. This is better because session replacement now fully reloads extensions, so one post-start hook with explicit reason matches the real lifecycle better than two extra non-cancellable post-transition events.
