@@ -15,9 +15,9 @@ OSS weekend runs Friday, March 27, 2026 through Monday, April 6, 2026. New issue
 
 # Metagotchi
 
-> Deterministic competitive programming harness
+> Deterministic competitive programming harness built on Pi
 
-Metagotchi is a deterministic competitive programming harness. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search.
+Metagotchi is a deterministic competitive programming harness built on Pi. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search.
 
 **Core principle: The harness is law; skills are library shelves.**
 
