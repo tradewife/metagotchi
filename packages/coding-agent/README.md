@@ -603,11 +603,6 @@ MIT
 
 ## Metagotchi: Competitive Programming Harness
 
-For competitive programming workloads, pi includes a deterministic harness that classifies problems, builds sprint contracts, retrieves context, verifies outputs, and logs traces.
+Metagotchi is a deterministic competitive programming harness that classifies problems, builds sprint contracts, retrieves context, verifies outputs, and logs traces.
 
-See [src/metagotchi/README.md](src/metagotchi/README.md) for detailed documentation on:
-- The solve pipeline and sprint contracts
-- Gotchas and risk blocks
-- Verification pipeline
-- Token budgets
-- Meta-loop optimization
+See [src/metagotchi/README.md](src/metagotchi/README.md) for detailed documentation.

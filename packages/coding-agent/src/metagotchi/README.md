@@ -1,10 +1,10 @@
-# Metagotchi: Deterministic Competitive Programming Harness for Pi
+# Metagotchi: Deterministic Competitive Programming Harness
 
-Metagotchi is Pi wrapped in a deterministic harness optimized for competitive programming. It classifies problems, builds sprint contracts, retrieves high-signal context, verifies outputs, and logs raw traces for diagnosis and meta-learning.
+Metagotchi is a deterministic competitive programming harness that classifies problems, builds sprint contracts, retrieves high-signal context, verifies outputs, and logs raw traces for diagnosis and meta-learning.
 
 **Core principle: The harness is law; skills are library shelves.**
 
-Metagotchi is not "Pi plus some helpful optional skills." Metagotchi is Pi inside a harness that always runs. The harness plans, retrieves, verifies, and logs. Pi focuses on generation within those constraints.
+Metagotchi is not "a model plus some helpful optional skills." Metagotchi is a model inside a harness that always runs. The harness plans, retrieves, verifies, and logs. The model focuses on generation within those constraints.
 
 ---
 
@@ -15,7 +15,7 @@ Metagotchi is not "Pi plus some helpful optional skills." Metagotchi is Pi insid
 1. Classify the problem → build `SprintContract`
 2. Retrieve gotchas, prior solutions, API refs, and templates
 3. Assemble prompt under token budget, preserving gotchas and risk blocks
-4. Pi generates candidate solutions
+4. Model generates candidate solutions
 5. Verify: compile, sample cases, static analysis, ranking
 6. Log raw trace to filesystem
 7. Archive AC solutions or update gotchas on failure
@@ -58,7 +58,7 @@ Metagotchi embodies these lessons: what matters is not just the base model, but 
 
 - **Archive AC solutions.** The retriever uses them for priors. More AC examples in the archive → better retrieval → better prompts.
 - **Review failure traces.** When a solve fails, the trace is logged. Review it. If a new failure pattern emerges, the harness may add a new gotcha.
-- **Keep gotchas updated.** As the gotchas registry grows, solve quality typically improves because Pi sees more of the institutional memory.
+- **Keep gotchas updated.** As the gotchas registry grows, solve quality typically improves because the model sees more of the institutional memory.
 - **Let the meta-loop run if enabled.** If `enableMetaLoop=true`, Metagotchi proposes harness improvements using filesystem evidence from prior runs. These proposals compound over time.
 
 ---
@@ -88,7 +88,7 @@ All Metagotchi code lives under `packages/coding-agent/src/metagotchi/`:
 
 ## The Sprint Contract
 
-Before Pi generates code, the classifier builds a `SprintContract`. This is the execution agreement.
+Before the model generates code, the classifier builds a `SprintContract`. This is the execution agreement.
 
 The contract includes:
 
@@ -274,13 +274,13 @@ Expected: "✓ All assertions passed" in <5s, exit 0.
 
 ## One-Line Summary
 
-**Metagotchi is a deterministic competitive programming harness for Pi: the runtime plans, retrieves, verifies, logs, and learns, while Pi focuses on generation inside those constraints.**
+**Metagotchi is a deterministic competitive programming harness: the runtime plans, retrieves, verifies, logs, and learns, while the model focuses on generation inside those constraints.**
 
 ---
 
-## Using Metagotchi with Existing Pi Installations
+## Using Metagotchi
 
-Metagotchi can be used with any Pi, Claude Code, or OpenCode installation that has access to the `HarnessRunner` API.
+Metagotchi is bundled with `@mariozechner/pi-coding-agent`. Install the package to access the `HarnessRunner` API.
 
 ### Installation
 
@@ -330,23 +330,6 @@ const harness = new HarnessRunner(config, modelStream);
 const trace = await harness.solve(problem);
 
 console.log(trace.finalVerdict); // 'AC' if successful
-```
-
-### With Pi SDK
-
-If you're using the Pi SDK, you can integrate Metagotchi into your agent session:
-
-```typescript
-import { createAgentSessionRuntime } from '@mariozechner/pi-coding-agent';
-import { HarnessRunner, type HarnessConfig } from '@mariozechner/pi-coding-agent/metagotchi';
-
-// ... set up auth, model registry ...
-
-const runtime = await createAgentSessionRuntime({
-  // ... your config
-});
-
-// Add Metagotchi as a tool or extension
 ```
 
 ---
