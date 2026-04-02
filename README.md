@@ -9,25 +9,15 @@ OSS weekend runs Friday, March 27, 2026 through Monday, April 6, 2026. New issue
 ---
 
 <p align="center">
-  <a href="https://shittycodingagent.ai">
-    <img src="https://shittycodingagent.ai/logo.svg" alt="pi logo" width="128">
-  </a>
-</p>
-<p align="center">
   <a href="https://discord.com/invite/3cU7Bz4UPx"><img alt="Discord" src="https://img.shields.io/badge/discord-community-5865F2?style=flat-square&logo=discord&logoColor=white" /></a>
   <a href="https://github.com/tradewife/metagotchi/actions/workflows/ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/tradewife/metagotchi/ci.yml?style=flat-square&branch=main" /></a>
-</p>
-<p align="center">
-  <a href="https://pi.dev">pi.dev</a> domain graciously donated by
-  <br /><br />
-  <a href="https://exe.dev"><img src="packages/coding-agent/docs/images/exy.png" alt="Exy mascot" width="48" /><br />exe.dev</a>
 </p>
 
 # Metagotchi
 
-> Deterministic competitive programming harness. Built on Pi.
+> Deterministic competitive programming harness
 
-Metagotchi is Pi operating under a deterministic competitive programming harness. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, verifies outputs, logs raw traces, and optionally learns from failures.
+Metagotchi is a deterministic competitive programming harness. The harness always runs first—it classifies problems, builds sprint contracts, retrieves high-signal context, enforces token budgets, verifies candidates, logs raw traces, and optionally performs outer-loop harness search.
 
 **Core principle: The harness is law; skills are library shelves.**
 
@@ -35,20 +25,51 @@ A harness is executable infrastructure that governs what information the model s
 
 ---
 
+## Architecture
+
+Metagotchi has two always-on layers and one optional-but-runtime-controlled layer.
+
+### Layer 1: Persistent Policy Context
+
+Injected unconditionally through repository-level context files (`AGENTS.md`) and system prompt configuration. This is where global rules live: additive edits first, raw traces over summaries, verification before confidence, and explicit role boundaries between planner, generator, and evaluator.
+
+### Layer 2: Pre-Session Runtime Orchestration
+
+The harness lives in TypeScript under `packages/coding-agent/src/metagotchi/`. This runtime does the actual work before the model sees the problem: classification, sprint-contract creation, retrieval, prompt assembly, candidate generation strategy, verification, and logging.
+
+### Layer 3: Outer-Loop Meta-Learning (Optional)
+
+If `enableMetaLoop=true`, Metagotchi instantiates `MetaProposer` and performs filesystem-first harness search over prior candidates, traces, and scores. The proposer never optimizes from compressed summaries alone—it inspects raw artifacts via the filesystem and proposes additive, causally targeted harness edits.
+
+---
+
 ## The Solve Pipeline
 
 Every solve follows this deterministic order:
 
-1. **Classify** — Infer domain, sub-domain, difficulty, edge cases → build `SprintContract`
-2. **Retrieve** — Fetch gotchas, prior solutions, API refs, and code templates
-3. **Build Prompt** — Assemble under token budget, preserve gotchas and risk blocks
-4. **Generate** — Produce candidate solutions under the contract
-5. **Verify** — Compile check, sample execution, static analysis, ranking
-6. **Log** — Raw trace persisted to filesystem
-7. **Archive** — Store AC solutions or increment gotchas on failure
-8. **Meta-loop** (optional) — Outer-loop harness search using filesystem evidence
+1. Receive `ProblemSpec`
+2. **Classify** — Infer domain, sub-domain, difficulty, edge cases → build `SprintContract`
+3. **Retrieve** — Fetch gotchas, prior solutions, API refs, and code templates
+4. **Build Prompt** — Assemble under token budget, preserve gotchas and risk blocks
+5. **Generate** — Produce candidate solutions under the contract
+6. **Verify** — Compile check, sample execution, static analysis, ranking
+7. **Log** — Raw trace persisted to filesystem
+8. **Archive** — Store AC solutions or increment gotchas on failure
+9. **Meta-loop** (optional) — Outer-loop harness search using filesystem evidence
 
-None of these steps are optional. The harness runs every time.
+---
+
+## Architectural Model
+
+Metagotchi implements a strict **Planner / Generator / Evaluator** separation:
+
+| Role | Component | Responsibility |
+|------|-----------|-----------------|
+| Planner | `layers/classifier.ts` | Classify problem, build SprintContract |
+| Generator | Model via prompt package | Produce candidate solutions |
+| Evaluator | `layers/verifier.ts` | Verify candidates, assign verdicts |
+| Memory | `layers/logger.ts`, `store/*` | Persist raw traces, gotchas, archives |
+| Meta-optimizer | `meta/proposer.ts` | Propose harness edits (when enabled) |
 
 ---
 
@@ -65,17 +86,49 @@ None of these steps are optional. The harness runs every time.
 
 ---
 
-## Architecture
+## Sprint Contract
 
-Metagotchi implements a strict **Planner / Generator / Evaluator** separation:
+The `SprintContract` is the central execution agreement between the planner and the generator:
 
-| Role | Component | Responsibility |
-|------|-----------|-----------------|
-| Planner | `layers/classifier.ts` | Classify problem, build SprintContract |
-| Generator | Pi (via prompt package) | Produce candidate solutions |
-| Evaluator | `layers/verifier.ts` | Verify candidates, assign verdicts |
-| Memory | `layers/logger.ts`, `store/*` | Persist raw traces, gotchas, archives |
-| Meta-optimizer | `meta/proposer.ts` | Propose harness edits (when enabled) |
+- `algorithmClassification` / `likelyAlgorithms`
+- `complexityTarget`
+- `mandatoryEdgeCases`
+- `domain` / `subDomain`
+- `difficulty`
+- `tokenBudget`
+- `likelyFailureModes`
+- `retrievalQuery`
+
+---
+
+## Gotchas System
+
+The gotchas registry is Metagotchi's highest-priority reusable memory. Seeded patterns include:
+
+- `g-cpp-int-overflow` — int overflow when multiplying before assigning to long long
+- `g-cpp-cin-sync` — cin/cout without sync disable causes TLE
+- `g-graph-negative-dijkstra` — Dijkstra on graphs with negative weights
+- `g-dp-modular-arithmetic` — DP counting forgot MOD at each step
+- `g-python-recursion-limit` — Python DFS hits default limit (1000)
+- `g-geometry-floating-point` — Float comparison without epsilon
+- `g-endl-flush-tle` — std::endl flushes buffer causing TLE
+- `g-priority-queue-direction` — PQ heap direction wrong for Dijkstra
+- `g-python-large-io-tle` — Python input() is slow on large I/O
+- ... and more
+
+**Non-negotiable: The gotchas block is never truncated.** When prompt size exceeds budget, Metagotchi drops retrieved solutions first, then compresses lower-priority context. Gotchas and risk warnings stay.
+
+---
+
+## Verification Pipeline
+
+Metagotchi must verify before it believes:
+
+1. Compile / parse check
+2. Sample case execution under timeout
+3. Static analysis against known gotchas
+4. Optional complexity review / red-flag check
+5. Verdict assignment and candidate ranking
 
 ---
 
@@ -138,12 +191,6 @@ const modelStream = async (prompt: string): Promise<string> => {
 
 ---
 
-## Using with Existing Pi Installations
-
-Metagotchi integrates with any Pi, Claude Code, or OpenCode installation that has access to the `HarnessRunner` API. Install `@mariozechner/pi-coding-agent` and import from the `metagotchi` subpath.
-
----
-
 ## Repository Structure
 
 ```
@@ -172,9 +219,17 @@ packages/coding-agent/src/metagotchi/
 
 ---
 
-## Attribution
+## Non-Negotiable Rules
 
-Metagotchi is built on [Pi](https://pi.dev), a minimal terminal coding harness created by Mario Zechner. Metagotchi extends Pi with a deterministic competitive programming control plane while preserving Pi's extensibility through skills, prompt templates, and extensions.
+1. **Start additive, not rewriting.** Regressions are cheaper to control when changes are narrow.
+2. **Inspect raw traces before theorizing.** Never optimize from summaries alone.
+3. **Protect gotchas.** Never drop the gotcha block to save tokens.
+4. **Protect verification.** Do not skip compile/sample/static checks.
+5. **Isolate confounds.** Do not change multiple causal dimensions at once.
+6. **Keep filesystem history queryable.** The meta-loop depends on grep-able logs.
+7. **Do not move deterministic behavior into optional skills.** If it must always happen, it belongs in runtime or persistent context.
+
+---
 
 See [metagotchi-docs.md](metagotchi-docs.md) for the full specification.
 
