@@ -51,6 +51,10 @@ export interface SprintContract {
 	likelyAlgorithms: string[];
 	domain: ProblemDomain;
 	subDomain: string;
+	difficulty: Difficulty; // promoted from ClassifierOutput
+	tokenBudget: number; // computed by classifier: min(8000, max(2000, 10000 - difficultyPenalty))
+	likelyFailureModes: string[]; // pre-coded risk register from domain routing table
+	retrievalQuery: string; // used verbatim by Layer 2 retriever
 }
 
 // ---------------------------------------------------------------------------
@@ -114,13 +118,16 @@ export interface SolutionRecord {
 
 export interface GotchaRecord {
 	id: string;
-	domain: ProblemDomain | "*"; // "*" = cross-domain
+	domain: Array<ProblemDomain | "*">; // array to allow multi-domain gotchas
 	subDomain: string | "*";
-	pattern: string;
+	description: string; // replaces `pattern` (keep `pattern` as deprecated alias)
+	pattern: string; // keep for backward compat — same value as description
+	symptom: string; // what goes wrong if ignored
 	example: string;
 	fix: string;
 	firstSeenAt: string;
 	hitCount: number;
+	frequency: number; // alias of hitCount for spec compatibility
 	skillGenIndex: number;
 }
 
@@ -228,4 +235,26 @@ export interface HarnessEdit {
 	editType: "add-gotcha" | "update-template" | "update-keyword-map" | "update-retrieval-ranking";
 	description: string;
 	diff: string;
+}
+
+// ---------------------------------------------------------------------------
+// Meta-loop candidate & proposal types
+// ---------------------------------------------------------------------------
+
+export interface HarnessCandidate {
+	id: string;
+	sourceCode: string;
+	scores: Record<string, number>; // problemId → score
+	executionTraces: Record<string, string>;
+	proposerReasoning: string;
+	parentId?: string;
+	skillGenIndex: number;
+	isOnParetoFrontier: boolean;
+}
+
+export interface MetaProposal {
+	newHarnessCode: string;
+	hypothesis: string;
+	confoundsAvoided: string[];
+	isAdditive: boolean;
 }

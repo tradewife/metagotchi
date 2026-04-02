@@ -14,11 +14,13 @@
  */
 
 import { randomUUID } from "node:crypto";
+import path from "node:path";
 import { ProblemClassifier } from "./layers/classifier.js";
 import { TraceLogger } from "./layers/logger.js";
 import { ProblemPrompter } from "./layers/prompter.js";
 import { ProblemRetriever } from "./layers/retriever.js";
 import { SolutionVerifier } from "./layers/verifier.js";
+import { MetaProposer } from "./meta/proposer.js";
 import { INITIAL_GOTCHAS } from "./skills/gotchas.js";
 import { SolutionArchive } from "./store/solution-archive.js";
 import type { ExecutionTrace, GotchaRecord, HarnessConfig, ProblemSpec, Verdict, VerificationResult } from "./types.js";
@@ -60,6 +62,7 @@ export class HarnessRunner {
 	private readonly prompter: ProblemPrompter;
 	private readonly verifier: SolutionVerifier;
 	private readonly logger: TraceLogger;
+	private readonly metaProposer?: MetaProposer;
 
 	constructor(config: HarnessConfig, modelStream: ModelStreamFn) {
 		this.config = config;
@@ -73,6 +76,13 @@ export class HarnessRunner {
 		this.prompter = new ProblemPrompter();
 		this.verifier = new SolutionVerifier();
 		this.logger = logger;
+
+		if (config.enableMetaLoop) {
+			this.metaProposer = new MetaProposer(
+				path.join(config.archiveDir, "../harnesses"),
+				config.logDir,
+			);
+		}
 	}
 
 	async solve(problem: ProblemSpec): Promise<ExecutionTrace> {
@@ -358,11 +368,14 @@ export class HarnessRunner {
 				if (warning.includes("OVERFLOW")) {
 					return {
 						id: `runtime-overflow-${Date.now()}`,
-						domain,
+						domain: [domain],
 						subDomain: trace.classifierOutput.subDomain || "*",
+						description: "Integer overflow in intermediate calculation",
 						pattern: "Integer overflow in intermediate calculation",
+						symptom: "WA on large test cases due to integer overflow",
 						example: trace.candidateSolutions[trace.candidateSolutions.length - 1]?.slice(0, 200) ?? "",
 						fix: "Cast to larger integer type before arithmetic operations",
+						frequency: 1,
 						firstSeenAt: trace.problemId,
 						hitCount: 1,
 						skillGenIndex: 1,
@@ -371,11 +384,14 @@ export class HarnessRunner {
 				if (warning.includes("TLE_RISK")) {
 					return {
 						id: `runtime-tle-${Date.now()}`,
-						domain,
+						domain: [domain],
 						subDomain: trace.classifierOutput.subDomain || "*",
+						description: "Time limit exceeded due to suboptimal algorithm or I/O",
 						pattern: "Time limit exceeded due to suboptimal algorithm or I/O",
+						symptom: "TLE despite correct algorithm",
 						example: trace.candidateSolutions[trace.candidateSolutions.length - 1]?.slice(0, 200) ?? "",
 						fix: "Use faster I/O and ensure algorithm complexity matches constraint-derived target",
+						frequency: 1,
 						firstSeenAt: trace.problemId,
 						hitCount: 1,
 						skillGenIndex: 1,
@@ -396,7 +412,7 @@ export class HarnessRunner {
 			const warningLower = warning.toLowerCase();
 
 			for (const gotcha of INITIAL_GOTCHAS) {
-				if (gotcha.domain === trace.classifierOutput.domain || gotcha.domain === "*") {
+				if (gotcha.domain.includes(trace.classifierOutput.domain) || gotcha.domain.includes("*")) {
 					if (warningLower.includes(gotcha.id.replace(/-/g, " "))) {
 						await this.logger.appendGotcha({
 							...gotcha,

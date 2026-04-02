@@ -7,15 +7,17 @@ export type { Logger } from "./layers/logger.js";
 export type { Prompter, PrompterOptions } from "./layers/prompter.js";
 export type { Retriever } from "./layers/retriever.js";
 export type { Verifier } from "./layers/verifier.js";
-export type { MetaProposer } from "./meta/proposer.js";
+export { MetaProposer } from "./meta/proposer.js";
 export type {
 	ArchiveQuery,
 	ClassifierOutput,
 	Difficulty,
 	ExecutionTrace,
 	GotchaRecord,
+	HarnessCandidate,
 	HarnessConfig,
 	HarnessEdit,
+	MetaProposal,
 	Language,
 	MetaAnalysis,
 	ProblemDomain,

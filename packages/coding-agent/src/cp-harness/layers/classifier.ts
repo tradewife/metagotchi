@@ -15,7 +15,7 @@ import {
 	inferComplexityTarget,
 } from "../skills/algorithms.js";
 import type { SolutionArchive } from "../store/solution-archive.js";
-import type { ClassifierOutput, ProblemDomain, ProblemSpec, SprintContract } from "../types.js";
+import type { ClassifierOutput, Difficulty, ProblemDomain, ProblemSpec, SprintContract } from "../types.js";
 
 // ---------------------------------------------------------------------------
 // Interface
@@ -92,6 +92,76 @@ const DOMAIN_EDGE_CASE_CHECKERS: Record<string, (text: string) => string[]> = {
 };
 
 // ---------------------------------------------------------------------------
+// Domain failure modes (risk register)
+// ---------------------------------------------------------------------------
+
+const DOMAIN_FAILURE_MODES: Record<ProblemDomain, string[]> = {
+	graph: [
+		"off-by-one in 0-indexed nodes",
+		"visited array not reset between test cases",
+		"unweighted vs weighted edge confusion",
+	],
+	dp: [
+		"wrong base case",
+		"state array index out of bounds",
+		"missing modular arithmetic on counting problems",
+	],
+	geometry: [
+		"floating point epsilon wrong — use 1e-9",
+		"degenerate collinear case unhandled",
+		"wrong orientation sign",
+	],
+	math: [
+		"integer overflow — use long long",
+		"Fermat's little theorem applied to non-prime modulus",
+		"wrong modular inverse for composite MOD",
+	],
+	"data-structure": [
+		"lazy propagation not pushed before query",
+		"DSU find not path-compressed",
+		"segment tree merge order wrong",
+	],
+	string: [
+		"off-by-one in KMP failure function",
+		"suffix array built in O(N^2) when O(N log N) needed",
+		"trie child indexing off by char offset",
+	],
+	greedy: [
+		"sorting comparator violates strict weak ordering",
+		"tie-breaking missing — non-deterministic sort",
+	],
+	combinatorics: [
+		"missing modular arithmetic on large factorials",
+		"double-counting symmetric pairs",
+	],
+	"number-theory": [
+		"Fermat's little theorem applied to non-prime modulus",
+		"sieve not extended to sqrt(N) for factorization",
+	],
+	interactive: [
+		"flush not called after each query — use endl or fflush",
+		"binary search bounds wrong on interactive problem",
+	],
+	"ml-data": ["label leakage in feature construction", "wrong normalisation scale"],
+	systems: ["environment not bootstrapped before first action", "missing dependency check"],
+	unknown: ["uncategorised — review manually"],
+};
+
+// ---------------------------------------------------------------------------
+// Token budget computation
+// ---------------------------------------------------------------------------
+
+function computeTokenBudget(difficulty: Difficulty): number {
+	const penalty: Record<Difficulty, number> = {
+		easy: 0,
+		medium: 1000,
+		hard: 2500,
+		extreme: 4000,
+	};
+	return Number(Math.min(8000, Math.max(2000, 10000 - (penalty[difficulty] ?? 0))));
+}
+
+// ---------------------------------------------------------------------------
 // Implementation
 // ---------------------------------------------------------------------------
 
@@ -152,6 +222,7 @@ export class ProblemClassifier implements Classifier {
 			problem.constraints,
 			edgeCaseFlags,
 			likelyAlgorithms,
+			difficulty,
 		);
 
 		return {
@@ -236,6 +307,7 @@ export class ProblemClassifier implements Classifier {
 		constraints: string,
 		edgeCaseFlags: string[],
 		likelyAlgorithms: string[],
+		difficulty: Difficulty,
 	): SprintContract {
 		const algorithmClassification =
 			likelyAlgorithms.length > 0 ? likelyAlgorithms.join(" / ") : `${subDomain || domain} — algorithm TBD`;
@@ -280,6 +352,10 @@ export class ProblemClassifier implements Classifier {
 			likelyAlgorithms,
 			domain,
 			subDomain,
+			difficulty,
+			tokenBudget: computeTokenBudget(difficulty),
+			likelyFailureModes: DOMAIN_FAILURE_MODES[domain] ?? [],
+			retrievalQuery: `${domain} ${subDomain} ${algorithmClassification}`,
 		};
 	}
 

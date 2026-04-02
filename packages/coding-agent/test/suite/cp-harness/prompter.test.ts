@@ -40,6 +40,10 @@ function makeClassifier(overrides: Partial<ClassifierOutput> = {}): ClassifierOu
 			likelyAlgorithms: ["Dijkstra", "BFS"],
 			domain: "graph",
 			subDomain: "shortest-path",
+			difficulty: "medium",
+			tokenBudget: 8000,
+			likelyFailureModes: ["off-by-one in 0-indexed nodes"],
+			retrievalQuery: "graph shortest-path Dijkstra with priority queue",
 		},
 		...overrides,
 	};
@@ -51,13 +55,16 @@ function makeContext(overrides: Partial<RetrievalContext> = {}): RetrievalContex
 		relevantGotchas: [
 			{
 				id: "test-gotcha",
-				domain: "graph",
+				domain: ["graph"],
 				subDomain: "*",
+				description: "Dijkstra used on graph with negative edge weights",
 				pattern: "Dijkstra used on graph with negative edge weights",
+				symptom: "WA on graphs with negative weights",
 				example: "Applying Dijkstra when constraints say -10^9 ≤ w ≤ 10^9",
 				fix: "Use Bellman-Ford or SPFA for negative weights.",
 				firstSeenAt: "test",
 				hitCount: 5,
+				frequency: 5,
 				skillGenIndex: 1,
 			},
 		],

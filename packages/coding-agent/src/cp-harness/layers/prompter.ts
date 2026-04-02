@@ -12,6 +12,7 @@ import type {
 	ProblemSpec,
 	PromptPackage,
 	RetrievalContext,
+	SprintContract,
 	VerificationResult,
 } from "../types.js";
 
@@ -77,8 +78,12 @@ export class ProblemPrompter implements Prompter {
 			retrievalSummary,
 		};
 
-		// Token budget enforcement
-		return this.enforceTokenBudget(pkg, config.maxContextTokens, context);
+		// Token budget enforcement — use SprintContract.tokenBudget for initial prompt,
+		// config.maxContextTokens as hard ceiling fallback
+		const effectiveBudget = options.failureResult
+			? config.maxContextTokens
+			: classifier.sprintContract.tokenBudget;
+		return this.enforceTokenBudget(pkg, effectiveBudget, context);
 	}
 
 	private buildSystemPrompt(
@@ -295,6 +300,13 @@ export class ProblemPrompter implements Prompter {
 			return text.slice(0, start);
 		}
 		return text.slice(0, start) + text.slice(nextSection);
+	}
+
+	private buildRiskBlock(contract: SprintContract): string {
+		if (!contract.likelyFailureModes?.length) return "";
+		return contract.likelyFailureModes
+			.map((m) => `⚠ RISK: ${m}`)
+			.join("\n");
 	}
 
 	private buildRetrievalSummary(context: RetrievalContext): string {

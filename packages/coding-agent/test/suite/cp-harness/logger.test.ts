@@ -41,6 +41,10 @@ function makeTrace(overrides: Partial<ExecutionTrace> = {}): ExecutionTrace {
 				likelyAlgorithms: ["Dijkstra"],
 				domain: "graph",
 				subDomain: "shortest-path",
+				difficulty: "medium",
+				tokenBudget: 8000,
+				likelyFailureModes: [],
+				retrievalQuery: "graph shortest-path Dijkstra",
 			},
 		},
 		retrievalContext: {
@@ -137,13 +141,16 @@ describe("TraceLogger", () => {
 	it("appends a new gotcha", async () => {
 		const gotcha: GotchaRecord = {
 			id: "test-new-gotcha",
-			domain: "graph",
+			domain: ["graph"],
 			subDomain: "*",
+			description: "Test pattern",
 			pattern: "Test pattern",
+			symptom: "test symptom",
 			example: "Test example",
 			fix: "Test fix",
 			firstSeenAt: "test-problem",
 			hitCount: 0,
+			frequency: 0,
 			skillGenIndex: 1,
 		};
 
@@ -157,13 +164,16 @@ describe("TraceLogger", () => {
 	it("increments hitCount on duplicate gotcha", async () => {
 		const gotcha: GotchaRecord = {
 			id: "test-dup-gotcha",
-			domain: "graph",
+			domain: ["graph"],
 			subDomain: "*",
+			description: "Dup pattern",
 			pattern: "Dup pattern",
+			symptom: "dup symptom",
 			example: "Dup example",
 			fix: "Dup fix",
 			firstSeenAt: "test-problem",
 			hitCount: 3,
+			frequency: 3,
 			skillGenIndex: 1,
 		};
 
